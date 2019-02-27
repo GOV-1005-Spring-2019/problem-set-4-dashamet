@@ -72,7 +72,7 @@ The first `response` of Dem came `r times[1,3]` minutes (rounded to the nearest 
 #Question 2
 
 ```{r echo = FALSE, message = FALSE}
-#Cleaning the data: selecting the relevant variables, filtering out "Do not read" values, and reorganizing the levels corresponding to races with those on the original graph
+#Cleaning the data: selecting the relevant variables, filtering out "Do not read" values, and reorganizing the levels corresponding to races to match those on the original graph
 poll %>%
   select(response, race_eth, final_weight) %>%
   filter(race_eth != "[DO NOT READ] Don't know/Refused", 
@@ -112,14 +112,17 @@ poll %>%
 
 ```{r echo = FALSE, message = FALSE}
 poll %>%
-  filter(educ != "[DO NOT READ] Refused") %>%
-  mutate(educ = fct_relevel(educ, c("Grade school", "High school", "Some college or trade school",
-                                    "Bachelors' degree", "Graduate or Professional Degree"))) %>%
+  filter(educ != "[DO NOT READ] Refused") %>%    #Filtering out "Do Not Read" data from the education variable
+  mutate(educ = fct_relevel(educ, c("Grade school", 
+                                    "High school", 
+                                    "Some college or trade school",
+                                    "Bachelors' degree", 
+                                    "Graduate or Professional Degree"))) %>%   #Reorganizing the levels corresponding to education to match those on the original graph
   group_by(educ) %>%
   ggplot(aes(x = educ, y = final_weight)) + 
-  coord_flip() +
-  geom_violin() + 
-  geom_jitter(alpha = 0.5, size = 1) + 
+  coord_flip() +     #Flipping the x and y axes
+  geom_violin() +    #Plotting a violin graph
+  geom_jitter(alpha = 0.5, size = 1) +    #Shifting the plotted data points slightly (with random variation) and decreasing their transparency to see overlap
   theme_gray() + 
   labs(title = "More Educated Matters Less in North Carolina 9th",
        subtitle = "Poll gives more weight to people who are less likely to participate in polls",
