@@ -48,7 +48,7 @@ gender_diff = poll %>%
 There are two gender variables (`gender` and `gender_combined`). There are `r gender_diff[1,1]` individuals for whom these variables have different values.
 
 ```{r include = FALSE}
-#Filtering for  cases which meet the conditions in the question, then counting these cases
+#Filtering for cases which meet the conditions in the question, then counting these cases
 white = poll %>%
   filter(race_eth == "White" & file_race_black != "White") %>%
   count() 
@@ -56,9 +56,9 @@ white = poll %>%
 There are `r white[1,1]` respondents listed as “White” under `race_eth` who are not listed as “White” under `file_race_black`. 
 
 ```{r include = FALSE}
-#Filtering responses only for Democrats and Republicans and grouping by response
+#Filtering for responses only for Democrats and Republicans and grouping by response
 #Finding the lowest (i.e. earliest) timestamp for each group (Dem and Rep) 
-#Converting observations (Dem and Rep) into columns (keys) and the lowest timestamp into the observations (values)
+#Converting observations (Dem and Rep) into columns (keys) and the lowest timestamp into the observation (values)
 #Calculating the difference in time between the first Republican and Democrat responses 
 times = poll %>%
   filter(response %in% c("Dem", "Rep")) %>% 
@@ -81,15 +81,15 @@ poll %>%
 #Grouping the data by race and party response, calculating the weighted total, and converting observations to variables (i.e. Response = Dem, Rep, Und) and the respective weighted total as observations
   group_by(race_eth, response) %>%
   summarize(total = sum(final_weight)) %>%
-  spread(key = response, value = total, fill = 0) %>% #Fill sets missing values to 0. Without this, when performing calculations later in the code (lines 87-90), NA values will make the final result NA. 
+  spread(key = response, value = total, fill = 0) %>%   #Setting missing values to 0. Without this, when performing calculations later in the code (lines 87-90), NA values would make the final result NA. 
   ungroup() %>%
 #Calculating the proportion of Dem, Rep, and Und responses relative to the total number of responses
   mutate(all = Dem + Rep + Und + `3`) %>%
   mutate(Dem = Dem/all) %>%
   mutate(Rep = Rep/all) %>%
   mutate(Und = Und/all) %>%
-  select(-all, -`3`) %>% #Select all variables except for "all" and the "3" responses 
-  na_if(0) %>% #If a 0 is present (i.e. no data available), change it to NA. Later in the code (line 98), we replace missing data with a "-" to copy the original graph.
+  select(-all, -`3`) %>% #Selecting all variables except for "all" and the "3" responses 
+  na_if(0) %>% #If a 0 is present (i.e. no data available), change it to NA. Later in the code (line 98), we replace missing data (NA) with a "-" to copy the original graph.
   gt() %>%
   tab_header(title = "North Carolina’s 9th Congressional District", 
              subtitle = "2018 3rd wave polling data broken down by race") %>%
@@ -112,7 +112,7 @@ poll %>%
 
 ```{r echo = FALSE, message = FALSE}
 poll %>%
-  filter(educ != "[DO NOT READ] Refused") %>%    #Filtering out "Do Not Read" data from the education variable
+  filter(educ != "[DO NOT READ] Refused") %>%   #Filtering out "Do Not Read" data from the education variable
   mutate(educ = fct_relevel(educ, c("Grade school", 
                                     "High school", 
                                     "Some college or trade school",
@@ -122,7 +122,7 @@ poll %>%
   ggplot(aes(x = educ, y = final_weight)) + 
   coord_flip() +     #Flipping the x and y axes
   geom_violin() +    #Plotting a violin graph
-  geom_jitter(alpha = 0.5, size = 1) +    #Shifting the plotted data points slightly (with random variation) and decreasing their transparency to see overlap
+  geom_jitter(alpha = 0.5, size = 1) +    #Shifting the plotted data points slightly (with random variation) and decreasing the transparency to see their overlap
   theme_gray() + 
   labs(title = "More Educated Matters Less in North Carolina 9th",
        subtitle = "Poll gives more weight to people who are less likely to participate in polls",
