@@ -116,3 +116,21 @@ poll %>%
   ylab("Weight Given to Respondent in Calculating Poll Results")
 ```
 
+#Question 4
+```{r}
+poll %>%
+  select(response, gender, ager) %>%
+  filter(ager != "[DO NOT READ] Refused", response %in% c("Dem", "Rep", "Und")) %>%
+  group_by(gender, response, ager) %>%
+  summarize(total = n()) %>%
+  ggplot(aes(x = response, y = total, fill = gender)) +
+  geom_col(position = "dodge2") + 
+  labs(title = "Party Support In North Carolina's 9th District by Age and Gender", 
+       fill = "Gender", 
+       caption = "Source: New York Times Upshot/Siena College 2018 live polls") +
+  xlab(element_blank()) + 
+  ylab("Number of Responses") +
+  coord_flip() +
+  facet_wrap(~ager)
+```
+
