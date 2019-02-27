@@ -134,20 +134,22 @@ poll %>%
 #Question 4
 
 ```{r echo = FALSE, message = FALSE}
+#Creating a bar graph breaking down the support for each party (Democrats, Republicans, or Undecided) by gender within each age group
 poll %>%
-  select(response, gender, ager) %>%
-  filter(ager != "[DO NOT READ] Refused", response %in% c("Dem", "Rep", "Und")) %>%
+  select(response, gender, ager) %>%   #Selecting the relevant variables
+  filter(ager != "[DO NOT READ] Refused", 
+         response %in% c("Dem", "Rep", "Und")) %>%    #Filtering out "Do not read" observations from the age variable and "3" observations from the response variable
   group_by(gender, response, ager) %>%
-  summarize(total = n()) %>%
+  summarize(total = n()) %>%    #Calculating the total number of responses for each option (Rep, Dem, Und) within each combination of gender and age group
   ggplot(aes(x = response, y = total, fill = gender)) +
-  geom_col(position = "dodge2") + 
+  geom_col(position = "dodge2") +   #Columns are placed side by side
   labs(title = "Party Support In North Carolina's 9th District by Age and Gender", 
        fill = "Gender", 
        caption = "Source: New York Times Upshot/Siena College 2018 live polls") +
   xlab(element_blank()) + 
   ylab("Number of Responses") +
-  coord_flip() +
-  facet_wrap(~ager)
+  coord_flip() +    #Flipping the x and y axes for better visibility
+  facet_wrap(~ager)     #Creating separate graphs of responses broken down gender for each of the age groups
 ```
 
 #Colleagues
