@@ -23,6 +23,7 @@ poll = read_csv("ps_4_elections-poll-nc09-3.csv")
 #Question 1
 
 ```{r include = FALSE}
+#Filtering then counting poll responses for Democrats
 dem_supporters = poll %>%
   filter(response == "Dem") %>%
   count()
@@ -30,6 +31,7 @@ dem_supporters = poll %>%
 There were `r dem_supporters[1,1]` respondents who supported the Democratic candidate.
 
 ```{r include = FALSE}
+#Filtering and grouping responses for Republicans and Undecided, counting the total for each group, then subtracting the totals
 rep_vs_und = poll %>%
   filter(response %in% c("Rep", "Und")) %>%
   group_by(response) %>%
@@ -38,6 +40,7 @@ rep_vs_und = poll %>%
 There were `r rep_vs_und[1,2] - rep_vs_und[2,2]` more respondents who favored the Republican candidate than who were Undecided.
 
 ```{r include = FALSE}
+#Filtering for cases where the observation in gender does not equal the one in gender_combined, then counting these cases
 gender_diff = poll %>%
   filter(gender != gender_combined) %>%
   count()
@@ -45,6 +48,7 @@ gender_diff = poll %>%
 There are two gender variables (`gender` and `gender_combined`). There are `r gender_diff[1,1]` individuals for whom these variables have different values.
 
 ```{r include = FALSE}
+#Filtering for  cases which meet the conditions in the question, then counting these cases
 white = poll %>%
   filter(race_eth == "White" & file_race_black != "White") %>%
   count() 
@@ -52,8 +56,12 @@ white = poll %>%
 There are `r white[1,1]` respondents listed as “White” under `race_eth` who are not listed as “White” under `file_race_black`. 
 
 ```{r include = FALSE}
+#Filtering responses only for Democrats and Republicans and grouping by response
+#Finding the lowest (i.e. earliest) timestamp for each group (Dem and Rep) 
+#Converting observations (Dem and Rep) into columns (keys) and the lowest timestamp into the observations (values)
+#Calculating the difference in time between the first Republican and Democrat responses 
 times = poll %>%
-  filter(response %in% c("Dem", "Rep")) %>%
+  filter(response %in% c("Dem", "Rep")) %>% 
   group_by(response) %>%
   summarize(min = min(timestamp)) %>%
   spread(key = response, value = min) %>%
@@ -117,7 +125,8 @@ poll %>%
 ```
 
 #Question 4
-```{r}
+
+```{r echo = FALSE, message = FALSE}
 poll %>%
   select(response, gender, ager) %>%
   filter(ager != "[DO NOT READ] Refused", response %in% c("Dem", "Rep", "Und")) %>%
@@ -134,3 +143,5 @@ poll %>%
   facet_wrap(~ager)
 ```
 
+#Colleagues
+I collaborated with Alistair Gluck and Benjamin Hoffner-Brodsky. 
